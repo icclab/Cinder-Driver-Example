@@ -9,7 +9,11 @@ LOG = logging.getLogger(__name__)
 CONF = cfg.CONF
 ENABLE_TRACE = False
 
-volume_opts = []
+volume_opts = [
+    cfg.StrOpt('foo_api_endpoint',
+               default='http://0.0.0.0:12345',
+               help='the api endpoint at which the foo storage system sits')
+]
 
 CONF = cfg.CONF
 CONF.register_opts(volume_opts)
@@ -22,6 +26,8 @@ class FooDriver(driver.VolumeDriver):
     def __init__(self, *args, **kwargs):
         super(FooDriver, self).__init__(*args, **kwargs)
         self.configuration.append_config_values(volume_opts)
+        self.endpoint = self.configuration.safe_get('foo_api_endpoint')
+
 
     def logmsg(self, string):
         LOG.debug(string)
